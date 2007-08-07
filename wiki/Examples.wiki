@@ -1,8 +1,5 @@
-#summary One-sentence summary of this page.
+#summary Sample code illustrating how to use the parseCSV class.
 #labels featured,Phase-Implementation
-
-
-=Example Usage=
 
 
 ===General:===
@@ -55,7 +52,6 @@ $csv->save('data.csv', array('1986', 'Home', 'Nowhere', ''), true);
 $csv = new parseCSV();
 $csv->output (true, 'movies.csv', $array);
 }}}
-
 
 
 
