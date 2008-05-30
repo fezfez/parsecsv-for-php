@@ -1,6 +1,10 @@
 #summary Updates and Changes
 #labels Featured
 
+=== parseCSV 0.4.1 beta ===
+*_Date: 29-May-2008_*
+  * Fixed a small bug in how the output() method handles input data.
+
 === parseCSV 0.4 beta ===
 *_Date: 11-Apr-2008_*
   * Error reporting for files/data which is corrupt or has formatting errors like using double quotes in a field without enclosing quotes. Or not escaping double quotes with a second one.
