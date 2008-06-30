@@ -138,6 +138,11 @@ class parseCSV {
 	# keep raw file data in memory after successful parsing (useful for debugging)
 	var $keep_file_data = false;
 	
+	# column white/black lists, fill with column names to have them filtered out accordingly
+	var $column_whitelist = array();
+	var $column_blacklist = array();
+	
+	
 	/**
 	 * Internal variables
 	 */
@@ -370,6 +375,11 @@ class parseCSV {
 		}
 		
 		$white_spaces = str_replace($this->delimiter, '', " \t\x0B\0");
+
+		$column_filtering = false;	
+		if ( !empty($this->column_whitelist) || !empty($this->column_blacklist) ) {
+			$column_filtering = true;
+		}
 		
 		$rows = array();
 		$row = array();
@@ -444,7 +454,14 @@ class parseCSV {
 			// end of field/row
 			} elseif ( ($ch == $this->delimiter || $ch == "\n" || $ch == "\r") && !$enclosed ) {
 				$key = ( !empty($head[$col]) ) ? $head[$col] : $col ;
-				$row[$key] = ( $was_enclosed ) ? $current : trim($current) ;
+				if ( $column_filtering ) {
+					if ( !$this->_filter_column($key) ) {
+						$row[$key] = ( $was_enclosed ) ? $current : trim($current) ;
+					}
+				} else {
+					$row[$key] = ( $was_enclosed ) ? $current : trim($current) ;
+				}
+				
 				$current = '';
 				$was_enclosed = false;
 				$col++;
@@ -668,6 +685,24 @@ class parseCSV {
 	function _validate_offset ($current_row) {
 		if ( $this->sort_by === null && $this->offset !== null && $current_row < $this->offset ) return false;
 		return true;
+	}
+	
+	/**
+	 * Checks wether specified column name should be filtered out or not according to white/black lists
+	 * @param   key   the current column name being processed
+	 * @return  true of false
+	 */
+	function _filter_column ($key) {
+		if ( !empty($this->column_whitelist) && array_search($key, $this->column_whitelist) === false ) {
+			$white = true;
+		}
+		if ( !empty($this->column_blacklist) && array_search($key, $this->column_blacklist) !== false ) {
+			$black = true;
+		}
+		if ( isset($white) || isset($black) ) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
